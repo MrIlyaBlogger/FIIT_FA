@@ -1,7 +1,6 @@
 ﻿namespace TreeDataStructures.Core;
 
-public class Node<TKey, TValue, TNode>(TKey key, TValue value) where TNode : Node<TKey, TValue, TNode> 
-{
+public class Node<TKey, TValue, TNode>(TKey key, TValue value) where TNode : Node<TKey, TValue, TNode>  {
     public TKey Key { get; set; } = key;
     public TValue Value { get; set; } = value;
     

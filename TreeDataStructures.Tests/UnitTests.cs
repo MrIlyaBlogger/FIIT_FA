@@ -8,8 +8,7 @@ using TreeDataStructures.Tests.Base;
 namespace TreeDataStructures.Tests;
 
 [TestFixture, Category("BST")]
-public class BinarySearchTreeTests : GenericTreeTests<BinarySearchTree<int, string>>
-{
+public class BinarySearchTreeTests : GenericTreeTests<BinarySearchTree<int, string>> {
     #region Обходы (Traversals)
     /// <summary>
     /// Тест проверяет классические порядки обхода.
@@ -20,8 +19,7 @@ public class BinarySearchTreeTests : GenericTreeTests<BinarySearchTree<int, stri
     /// PostOrder: 5, 15, 10
     /// </summary>
     [Test]
-    public void Test_Traversals_Order()
-    {
+    public void Test_Traversals_Order() {
         Tree.Add(10, "Root");
         Tree.Add(5, "Left");
         Tree.Add(15, "Right");
@@ -39,8 +37,7 @@ public class BinarySearchTreeTests : GenericTreeTests<BinarySearchTree<int, stri
     }
     
     [Test]
-    public void Test_Reverse_Traversals()
-    {
+    public void Test_Reverse_Traversals() {
         Tree.Add(10, "Root");
         Tree.Add(5, "Left");
         Tree.Add(15, "Right");

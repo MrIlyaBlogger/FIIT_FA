@@ -9,35 +9,29 @@ ITree<int, string> tree = CreateTree("bst");
 
 PrintWelcome();
 
-while (true)
-{
+while (true) {
     Console.Write("> ");
     string? line = Console.ReadLine();
-    if (line == null)
-    {
+    if (line == null) {
         break;
     }
 
     string trimmed = line.Trim();
-    if (trimmed.Length == 0)
-    {
+    if (trimmed.Length == 0) {
         continue;
     }
 
     string[] parts = trimmed.Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
     string command = parts[0].ToLowerInvariant();
 
-    try
-    {
-        switch (command)
-        {
+    try {
+        switch (command) {
             case "help":
                 PrintHelp();
                 break;
 
             case "type":
-                if (parts.Length < 2)
-                {
+                if (parts.Length < 2) {
                     Console.WriteLine("Usage: type <bst|avl|rb|splay|treap>");
                     break;
                 }
@@ -47,8 +41,7 @@ while (true)
                 break;
 
             case "add":
-                if (parts.Length < 3 || !TryParseKey(parts[1], out int addKey))
-                {
+                if (parts.Length < 3 || !TryParseKey(parts[1], out int addKey)) {
                     Console.WriteLine("Usage: add <int-key> <value>");
                     break;
                 }
@@ -58,8 +51,7 @@ while (true)
                 break;
 
             case "remove":
-                if (parts.Length < 2 || !TryParseKey(parts[1], out int removeKey))
-                {
+                if (parts.Length < 2 || !TryParseKey(parts[1], out int removeKey)) {
                     Console.WriteLine("Usage: remove <int-key>");
                     break;
                 }
@@ -69,26 +61,22 @@ while (true)
                 break;
 
             case "get":
-                if (parts.Length < 2 || !TryParseKey(parts[1], out int getKey))
-                {
+                if (parts.Length < 2 || !TryParseKey(parts[1], out int getKey)) {
                     Console.WriteLine("Usage: get <int-key>");
                     break;
                 }
 
-                if (tree.TryGetValue(getKey, out string? value))
-                {
+                if (tree.TryGetValue(getKey, out string? value)) {
                     Console.WriteLine(value);
                 }
-                else
-                {
+                else {
                     Console.WriteLine("Key not found.");
                 }
 
                 break;
 
             case "contains":
-                if (parts.Length < 2 || !TryParseKey(parts[1], out int containsKey))
-                {
+                if (parts.Length < 2 || !TryParseKey(parts[1], out int containsKey)) {
                     Console.WriteLine("Usage: contains <int-key>");
                     break;
                 }
@@ -118,8 +106,7 @@ while (true)
                 break;
         }
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
         Console.WriteLine($"Error: {ex.Message}");
     }
 }
@@ -171,3 +158,4 @@ static void PrintHelp()
     Console.WriteLine("  clear");
     Console.WriteLine("  exit");
 }
+

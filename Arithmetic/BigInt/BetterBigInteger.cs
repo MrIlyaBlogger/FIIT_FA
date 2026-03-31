@@ -3,8 +3,7 @@ using Arithmetic.BigInt.MultiplyStrategy;
 
 namespace Arithmetic.BigInt;
 
-public sealed class BetterBigInteger : IBigInteger
-{
+public sealed class BetterBigInteger : IBigInteger {
     private int _signBit;
     
     private uint _smallValue; // Если число маленькое, храним его прямо в этом поле, а _data == null.
@@ -23,14 +22,12 @@ public sealed class BetterBigInteger : IBigInteger
         throw new NotImplementedException();
     }
     
-    public BetterBigInteger(string value, int radix)
-    {
+    public BetterBigInteger(string value, int radix) {
         throw new NotImplementedException();
     }
     
     
-    public ReadOnlySpan<uint> GetDigits()
-    {
+    public ReadOnlySpan<uint> GetDigits() {
         return _data ?? [_smallValue];
     }
     

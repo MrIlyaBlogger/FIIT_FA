@@ -2,8 +2,7 @@
 
 public readonly record struct TreeEntry<TKey, TValue>(TKey Key, TValue Value, int Depth);
 
-public interface ITree<TKey, TValue> : IDictionary<TKey, TValue>
-{
+public interface ITree<TKey, TValue> : IDictionary<TKey, TValue> {
     // Прямой порядок
     IEnumerable<TreeEntry<TKey, TValue>>  InOrder();   // Infix
     IEnumerable<TreeEntry<TKey, TValue>>  PreOrder();  // Prefix

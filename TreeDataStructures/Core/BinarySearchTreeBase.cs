@@ -6,8 +6,7 @@ namespace TreeDataStructures.Core;
 
 public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>? comparer = null)
     : ITree<TKey, TValue>
-    where TNode : Node<TKey, TValue, TNode>
-{
+    where TNode : Node<TKey, TValue, TNode> {
     protected TNode? Root;
     public IComparer<TKey> Comparer { get; protected set; } = comparer ?? Comparer<TKey>.Default;
 
@@ -20,8 +19,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         get
         {
             List<TKey> keys = new(Count);
-            foreach (var entry in InOrder())
-            {
+            foreach (var entry in InOrder()) {
                 keys.Add(entry.Key);
             }
 
@@ -34,8 +32,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         get
         {
             List<TValue> values = new(Count);
-            foreach (var entry in InOrder())
-            {
+            foreach (var entry in InOrder()) {
                 values.Add(entry.Value);
             }
 
@@ -43,10 +40,8 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         }
     }
 
-    public virtual void Add(TKey key, TValue value)
-    {
-        if (Root == null)
-        {
+    public virtual void Add(TKey key, TValue value) {
+        if (Root == null) {
             Root = CreateNode(key, value);
             Count = 1;
             OnNodeAdded(Root);
@@ -56,12 +51,10 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         TNode? parent = null;
         TNode? current = Root;
 
-        while (current != null)
-        {
+        while (current != null) {
             parent = current;
             int cmp = Comparer.Compare(key, current.Key);
-            if (cmp == 0)
-            {
+            if (cmp == 0) {
                 current.Value = value;
                 return;
             }
@@ -71,12 +64,10 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
         TNode newNode = CreateNode(key, value);
         newNode.Parent = parent;
-        if (Comparer.Compare(key, parent!.Key) < 0)
-        {
+        if (Comparer.Compare(key, parent!.Key) < 0) {
             parent.Left = newNode;
         }
-        else
-        {
+        else {
             parent.Right = newNode;
         }
 
@@ -84,11 +75,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         OnNodeAdded(newNode);
     }
 
-    public virtual bool Remove(TKey key)
-    {
+    public virtual bool Remove(TKey key) {
         TNode? node = FindNode(key);
-        if (node == null)
-        {
+        if (node == null) {
             return false;
         }
 
@@ -97,10 +86,8 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         return true;
     }
 
-    protected virtual void RemoveNode(TNode node)
-    {
-        if (node.Left == null)
-        {
+    protected virtual void RemoveNode(TNode node) {
+        if (node.Left == null) {
             TNode? parent = node.Parent;
             TNode? child = node.Right;
             Transplant(node, node.Right);
@@ -108,8 +95,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             return;
         }
 
-        if (node.Right == null)
-        {
+        if (node.Right == null) {
             TNode? parent = node.Parent;
             TNode? child = node.Left;
             Transplant(node, node.Left);
@@ -119,8 +105,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
         TNode successor = Minimum(node.Right);
 
-        if (successor.Parent != node)
-        {
+        if (successor.Parent != node) {
             Transplant(successor, successor.Right);
             successor.Right = node.Right;
             successor.Right!.Parent = successor;
@@ -135,11 +120,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
     public virtual bool ContainsKey(TKey key) => FindNode(key) != null;
 
-    public virtual bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
-    {
+    public virtual bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value) {
         TNode? node = FindNode(key);
-        if (node != null)
-        {
+        if (node != null) {
             value = node.Value;
             return true;
         }
@@ -148,8 +131,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         return false;
     }
 
-    public TValue this[TKey key]
-    {
+    public TValue this[TKey key] {
         get => TryGetValue(key, out TValue? val) ? val : throw new KeyNotFoundException();
         set => Add(key, value);
     }
@@ -166,14 +148,11 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
     protected abstract TNode CreateNode(TKey key, TValue value);
 
-    protected TNode? FindNode(TKey key)
-    {
+    protected TNode? FindNode(TKey key) {
         TNode? current = Root;
-        while (current != null)
-        {
+        while (current != null) {
             int cmp = Comparer.Compare(key, current.Key);
-            if (cmp == 0)
-            {
+            if (cmp == 0) {
                 return current;
             }
 
@@ -183,43 +162,35 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         return null;
     }
 
-    private static TNode Minimum(TNode node)
-    {
+    private static TNode Minimum(TNode node) {
         TNode current = node;
-        while (current.Left != null)
-        {
+        while (current.Left != null) {
             current = current.Left;
         }
 
         return current;
     }
 
-    protected void RotateLeft(TNode x)
-    {
+    protected void RotateLeft(TNode x) {
         TNode? y = x.Right;
-        if (y == null)
-        {
+        if (y == null) {
             return;
         }
 
         x.Right = y.Left;
-        if (y.Left != null)
-        {
+        if (y.Left != null) {
             y.Left.Parent = x;
         }
 
         y.Parent = x.Parent;
 
-        if (x.Parent == null)
-        {
+        if (x.Parent == null) {
             Root = y;
         }
-        else if (x.IsLeftChild)
-        {
+        else if (x.IsLeftChild) {
             x.Parent.Left = y;
         }
-        else
-        {
+        else {
             x.Parent.Right = y;
         }
 
@@ -227,32 +198,26 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         x.Parent = y;
     }
 
-    protected void RotateRight(TNode y)
-    {
+    protected void RotateRight(TNode y) {
         TNode? x = y.Left;
-        if (x == null)
-        {
+        if (x == null) {
             return;
         }
 
         y.Left = x.Right;
-        if (x.Right != null)
-        {
+        if (x.Right != null) {
             x.Right.Parent = y;
         }
 
         x.Parent = y.Parent;
 
-        if (y.Parent == null)
-        {
+        if (y.Parent == null) {
             Root = x;
         }
-        else if (y.IsLeftChild)
-        {
+        else if (y.IsLeftChild) {
             y.Parent.Left = x;
         }
-        else
-        {
+        else {
             y.Parent.Right = x;
         }
 
@@ -260,11 +225,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         y.Parent = x;
     }
 
-    protected void RotateBigLeft(TNode x)
-    {
+    protected void RotateBigLeft(TNode x) {
         TNode? pivot = x.Right;
-        if (pivot == null)
-        {
+        if (pivot == null) {
             return;
         }
 
@@ -272,11 +235,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         RotateLeft(pivot);
     }
 
-    protected void RotateBigRight(TNode y)
-    {
+    protected void RotateBigRight(TNode y) {
         TNode? pivot = y.Left;
-        if (pivot == null)
-        {
+        if (pivot == null) {
             return;
         }
 
@@ -284,10 +245,8 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         RotateRight(pivot);
     }
 
-    protected void RotateDoubleLeft(TNode x)
-    {
-        if (x.Right == null)
-        {
+    protected void RotateDoubleLeft(TNode x) {
+        if (x.Right == null) {
             return;
         }
 
@@ -295,10 +254,8 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         RotateLeft(x);
     }
 
-    protected void RotateDoubleRight(TNode y)
-    {
-        if (y.Left == null)
-        {
+    protected void RotateDoubleRight(TNode y) {
+        if (y.Left == null) {
             return;
         }
 
@@ -306,23 +263,18 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         RotateRight(y);
     }
 
-    protected void Transplant(TNode u, TNode? v)
-    {
-        if (u.Parent == null)
-        {
+    protected void Transplant(TNode u, TNode? v) {
+        if (u.Parent == null) {
             Root = v;
         }
-        else if (u.IsLeftChild)
-        {
+        else if (u.IsLeftChild) {
             u.Parent.Left = v;
         }
-        else
-        {
+        else {
             u.Parent.Right = v;
         }
 
-        if (v != null)
-        {
+        if (v != null) {
             v.Parent = u.Parent;
         }
     }
@@ -345,8 +297,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         private List<TreeEntry<TKey, TValue>>? _entries;
         private int _index;
 
-        public TreeIterator(TNode? root, TraversalStrategy strategy)
-        {
+        public TreeIterator(TNode? root, TraversalStrategy strategy) {
             _root = root;
             _strategy = strategy;
             _entries = null;
@@ -361,8 +312,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         {
             get
             {
-                if (_entries == null || _index < 0 || _index >= _entries.Count)
-                {
+                if (_entries == null || _index < 0 || _index >= _entries.Count) {
                     throw new InvalidOperationException();
                 }
 
@@ -372,16 +322,13 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
         object IEnumerator.Current => Current;
 
-        public bool MoveNext()
-        {
-            if (_entries == null)
-            {
+        public bool MoveNext() {
+            if (_entries == null) {
                 _entries = BuildEntries(_root, _strategy);
                 _index = -1;
             }
 
-            if (_index + 1 >= _entries.Count)
-            {
+            if (_index + 1 >= _entries.Count) {
                 return false;
             }
 
@@ -389,18 +336,15 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             return true;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             _entries = null;
             _index = -1;
         }
 
         public void Dispose() { }
 
-        private static List<TreeEntry<TKey, TValue>> BuildEntries(TNode? root, TraversalStrategy strategy)
-        {
-            if (root == null)
-            {
+        private static List<TreeEntry<TKey, TValue>> BuildEntries(TNode? root, TraversalStrategy strategy) {
+            if (root == null) {
                 return [];
             }
 
@@ -417,23 +361,20 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
                 or TraversalStrategy.PostOrderReverse;
 
             List<TNode> nodes = BuildDirectNodeOrder(root, baseStrategy);
-            if (reverse)
-            {
+            if (reverse) {
                 nodes.Reverse();
             }
 
             Dictionary<TNode, int> heights = BuildHeightMap(root);
             List<TreeEntry<TKey, TValue>> entries = new(nodes.Count);
-            foreach (TNode node in nodes)
-            {
+            foreach (TNode node in nodes) {
                 entries.Add(new TreeEntry<TKey, TValue>(node.Key, node.Value, heights[node]));
             }
 
             return entries;
         }
 
-        private static List<TNode> BuildDirectNodeOrder(TNode root, TraversalStrategy strategy)
-        {
+        private static List<TNode> BuildDirectNodeOrder(TNode root, TraversalStrategy strategy) {
             return strategy switch
             {
                 TraversalStrategy.InOrder => BuildInOrder(root),
@@ -443,16 +384,13 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             };
         }
 
-        private static List<TNode> BuildInOrder(TNode root)
-        {
+        private static List<TNode> BuildInOrder(TNode root) {
             List<TNode> nodes = [];
             Stack<TNode> stack = [];
             TNode? current = root;
 
-            while (current != null || stack.Count > 0)
-            {
-                while (current != null)
-                {
+            while (current != null || stack.Count > 0) {
+                while (current != null) {
                     stack.Push(current);
                     current = current.Left;
                 }
@@ -465,24 +403,20 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             return nodes;
         }
 
-        private static List<TNode> BuildPreOrder(TNode root)
-        {
+        private static List<TNode> BuildPreOrder(TNode root) {
             List<TNode> nodes = [];
             Stack<TNode> stack = [];
             stack.Push(root);
 
-            while (stack.Count > 0)
-            {
+            while (stack.Count > 0) {
                 TNode node = stack.Pop();
                 nodes.Add(node);
 
-                if (node.Right != null)
-                {
+                if (node.Right != null) {
                     stack.Push(node.Right);
                 }
 
-                if (node.Left != null)
-                {
+                if (node.Left != null) {
                     stack.Push(node.Left);
                 }
             }
@@ -490,30 +424,24 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             return nodes;
         }
 
-        private static List<TNode> BuildPostOrder(TNode root)
-        {
+        private static List<TNode> BuildPostOrder(TNode root) {
             List<TNode> nodes = [];
             Stack<(TNode Node, bool Visited)> stack = [];
             stack.Push((root, false));
 
-            while (stack.Count > 0)
-            {
+            while (stack.Count > 0) {
                 var (node, visited) = stack.Pop();
-                if (!visited)
-                {
+                if (!visited) {
                     stack.Push((node, true));
-                    if (node.Right != null)
-                    {
+                    if (node.Right != null) {
                         stack.Push((node.Right, false));
                     }
 
-                    if (node.Left != null)
-                    {
+                    if (node.Left != null) {
                         stack.Push((node.Left, false));
                     }
                 }
-                else
-                {
+                else {
                     nodes.Add(node);
                 }
             }
@@ -521,31 +449,25 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             return nodes;
         }
 
-        private static Dictionary<TNode, int> BuildHeightMap(TNode root)
-        {
+        private static Dictionary<TNode, int> BuildHeightMap(TNode root) {
             Dictionary<TNode, int> heights = [];
             Stack<(TNode Node, bool Visited)> stack = [];
             stack.Push((root, false));
 
-            while (stack.Count > 0)
-            {
+            while (stack.Count > 0) {
                 var (node, visited) = stack.Pop();
-                if (!visited)
-                {
+                if (!visited) {
                     stack.Push((node, true));
 
-                    if (node.Left != null)
-                    {
+                    if (node.Left != null) {
                         stack.Push((node.Left, false));
                     }
 
-                    if (node.Right != null)
-                    {
+                    if (node.Right != null) {
                         stack.Push((node.Right, false));
                     }
                 }
-                else
-                {
+                else {
                     int leftHeight = node.Left != null ? heights[node.Left] : 0;
                     int rightHeight = node.Right != null ? heights[node.Right] : 0;
                     heights[node] = Math.Max(leftHeight, rightHeight) + 1;
@@ -556,8 +478,7 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         }
     }
 
-    private enum TraversalStrategy
-    {
+    private enum TraversalStrategy {
         InOrder,
         PreOrder,
         PostOrder,
@@ -566,11 +487,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         PostOrderReverse
     }
 
-    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-    {
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
         List<KeyValuePair<TKey, TValue>> items = new(Count);
-        foreach (var entry in InOrder())
-        {
+        foreach (var entry in InOrder()) {
             items.Add(new KeyValuePair<TKey, TValue>(entry.Key, entry.Value));
         }
 
@@ -581,41 +500,36 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
 
     public void Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
 
-    public void Clear()
-    {
+    public void Clear() {
         Root = null;
         Count = 0;
     }
 
-    public bool Contains(KeyValuePair<TKey, TValue> item)
-    {
-        if (!TryGetValue(item.Key, out TValue? currentValue))
-        {
+    public bool Contains(KeyValuePair<TKey, TValue> item) {
+        if (!TryGetValue(item.Key, out TValue? currentValue)) {
             return false;
         }
 
         return EqualityComparer<TValue>.Default.Equals(currentValue, item.Value);
     }
 
-    public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-    {
+    public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
         ArgumentNullException.ThrowIfNull(array);
-        if (arrayIndex < 0)
-        {
+        if (arrayIndex < 0) {
             throw new ArgumentOutOfRangeException(nameof(arrayIndex));
         }
 
-        if (array.Length - arrayIndex < Count)
-        {
+        if (array.Length - arrayIndex < Count) {
             throw new ArgumentException("Destination array does not have enough space.");
         }
 
         int index = arrayIndex;
-        foreach (var entry in InOrder())
-        {
+        foreach (var entry in InOrder()) {
             array[index++] = new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
         }
     }
 
     public bool Remove(KeyValuePair<TKey, TValue> item) => Remove(item.Key);
 }
+
+

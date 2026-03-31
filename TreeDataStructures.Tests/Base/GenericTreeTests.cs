@@ -13,21 +13,18 @@ namespace TreeDataStructures.Tests.Base;
 [TestFixture(typeof(RedBlackTree<int, string>))]
 [TestFixture(typeof(SplayTree<int, string>))]
 [TestFixture(typeof(Treap<int, string>))]
-public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, new()
-{
+public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, new() {
     protected TTree Tree;
     
     [SetUp]
-    public void Setup()
-    {
+    public void Setup() {
         Tree = new TTree();
     }
     
     #region Базовые операции (IDictionary)
     
     [Test]
-    public void Test_InsertAndCount()
-    {
+    public void Test_InsertAndCount() {
         Tree.Add(5, "Five");
         Tree.Add(3, "Three");
         Tree.Add(7, "Seven");
@@ -41,8 +38,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_UpdateExistingKey()
-    {
+    public void Test_UpdateExistingKey() {
         Tree.Add(10, "Initial");
         Tree[10] = "Updated"; // Тест индексатора set
         
@@ -54,8 +50,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_TryGetValue()
-    {
+    public void Test_TryGetValue() {
         Tree.Add(10, "Ten");
         
         bool found = Tree.TryGetValue(10, out var val);
@@ -70,8 +65,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_Indexer_Throws_OnMissingKey()
-    {
+    public void Test_Indexer_Throws_OnMissingKey() {
         Assert.Throws<KeyNotFoundException>(() =>
         {
             string _ = Tree[999];
@@ -79,8 +73,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_Clear()
-    {
+    public void Test_Clear() {
         Tree.Add(1, "1");
         Tree.Add(2, "2");
         Tree.Clear();
@@ -93,8 +86,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_Keys_Values_Collections()
-    {
+    public void Test_Keys_Values_Collections() {
         Dictionary<int, string> data = new Dictionary<int, string> { { 5, "A" }, { 3, "B" }, { 7, "C" } };
         foreach (var kvp in data) Tree.Add(kvp.Key, kvp.Value);
         
@@ -114,8 +106,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     #region Удаление
     
     [Test]
-    public void Test_Remove_Leaf_And_InternalNodes()
-    {
+    public void Test_Remove_Leaf_And_InternalNodes() {
         //      50
         //    /    \
         //  30      70
@@ -147,13 +138,11 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     
     
     [Test]
-    public void Test_RandomData_Consistency()
-    {
+    public void Test_RandomData_Consistency() {
         Random random = new (123);
         HashSet<int> inserted = new ();
         
-        for (int i = 0; i < 500; i++)
-        {
+        for (int i = 0; i < 500; i++) {
             int val = random.Next(-1000, 1000);
             if (inserted.Add(val)) Tree.Add(val, "v");
         }
@@ -167,8 +156,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
         
         // Удаляем половину
         List<int> toRemove = inserted.Take(250).ToList();
-        foreach (int k in toRemove)
-        {
+        foreach (int k in toRemove) {
             Assert.That(Tree.Remove(k), Is.True, $"Failed to remove key {k}");
             inserted.Remove(k);
         }
@@ -179,10 +167,8 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     
     #region Splay Tests
     
-    private void AssertSplayProperty(int expectedKey)
-    {
-        if (!Tree.GetType().Name.StartsWith("SplayTree"))
-        {
+    private void AssertSplayProperty(int expectedKey) {
+        if (!Tree.GetType().Name.StartsWith("SplayTree")) {
             return;
         }
         
@@ -190,14 +176,12 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
         
         FieldInfo? rootField = null;
         Type? currentType = bstType;
-        while (currentType != null && rootField == null)
-        {
+        while (currentType != null && rootField == null) {
             rootField = currentType.GetField("Root", BindingFlags.NonPublic | BindingFlags.Instance);
             currentType = currentType.BaseType;
         }
         
-        if (rootField == null)
-        {
+        if (rootField == null) {
             Assert.Fail("Could not find protected field 'Root' via reflection.");
         }
         
@@ -213,8 +197,7 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     }
     
     [Test]
-    public void Test_SplayTree_RootMovement()
-    {
+    public void Test_SplayTree_RootMovement() {
         Tree.Add(10, "Ten");
         Tree.Add(20, "Twenty");
         Tree.Add(5, "Five");
@@ -229,3 +212,4 @@ public abstract class GenericTreeTests<TTree> where TTree : ITree<int, string>, 
     
     #endregion
 }
+
