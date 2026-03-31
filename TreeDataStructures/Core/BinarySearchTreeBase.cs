@@ -136,15 +136,9 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
         set => Add(key, value);
     }
 
-    #region Hooks
-
     protected virtual void OnNodeAdded(TNode newNode) { }
 
     protected virtual void OnNodeRemoved(TNode? parent, TNode? child) { }
-
-    #endregion
-
-    #region Helpers
 
     protected abstract TNode CreateNode(TKey key, TValue value);
 
@@ -278,8 +272,6 @@ public abstract class BinarySearchTreeBase<TKey, TValue, TNode>(IComparer<TKey>?
             v.Parent = u.Parent;
         }
     }
-
-    #endregion
 
     public IEnumerable<TreeEntry<TKey, TValue>> InOrder() => new TreeIterator(Root, TraversalStrategy.InOrder);
     public IEnumerable<TreeEntry<TKey, TValue>> PreOrder() => new TreeIterator(Root, TraversalStrategy.PreOrder);
