@@ -4,55 +4,6 @@ namespace TreeDataStructures.Implementations.RedBlackTree;
 
 public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbNode<TKey, TValue>>
     where TKey : IComparable<TKey> {
-    protected override void RemoveNode(RbNode<TKey, TValue> node) {
-        RbNode<TKey, TValue> y = node;
-        RbColor yOriginalColor = y.Color;
-        RbNode<TKey, TValue>? x;
-        RbNode<TKey, TValue>? xParent;
-
-        if (node.Left == null) {
-            x = node.Right;
-            xParent = node.Parent;
-            Transplant(node, node.Right);
-        }
-        else if (node.Right == null) {
-            x = node.Left;
-            xParent = node.Parent;
-            Transplant(node, node.Left);
-        }
-        else {
-            y = Minimum(node.Right);
-            yOriginalColor = y.Color;
-            x = y.Right;
-
-            if (y.Parent == node) {
-                xParent = y;
-                if (x != null) {
-                    x.Parent = y;
-                }
-            }
-            else {
-                xParent = y.Parent;
-                Transplant(y, y.Right);
-                y.Right = node.Right;
-                y.Right!.Parent = y;
-            }
-
-            Transplant(node, y);
-            y.Left = node.Left;
-            y.Left!.Parent = y;
-            y.Color = node.Color;
-        }
-
-        if (yOriginalColor == RbColor.Black) {
-            FixDelete(x, xParent);
-        }
-
-        if (Root != null) {
-            Root.Color = RbColor.Black;
-        }
-    }
-
     protected override RbNode<TKey, TValue> CreateNode(TKey key, TValue value)
         => new(key, value);
 
@@ -61,7 +12,11 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
     }
 
     protected override void OnNodeRemoved(RbNode<TKey, TValue>? parent, RbNode<TKey, TValue>? child) {
+        FixDelete(child, child?.Parent ?? parent);
 
+        if (Root != null) {
+            Root.Color = RbColor.Black;
+        }
     }
 
     private static RbColor ColorOf(RbNode<TKey, TValue>? node) => node?.Color ?? RbColor.Black;
@@ -70,15 +25,6 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
         if (node != null) {
             node.Color = color;
         }
-    }
-
-    private static RbNode<TKey, TValue> Minimum(RbNode<TKey, TValue> node) {
-        RbNode<TKey, TValue> current = node;
-        while (current.Left != null) {
-            current = current.Left;
-        }
-
-        return current;
     }
 
     private void FixInsert(RbNode<TKey, TValue> z) {
@@ -223,5 +169,4 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
         SetColor(x, RbColor.Black);
     }
 }
-
 
