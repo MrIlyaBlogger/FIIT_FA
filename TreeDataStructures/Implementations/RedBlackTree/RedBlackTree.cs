@@ -4,68 +4,28 @@ namespace TreeDataStructures.Implementations.RedBlackTree;
 
 public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbNode<TKey, TValue>>
     where TKey : IComparable<TKey> {
-    public override void Add(TKey key, TValue value) {
-        if (Root == null) {
-            Root = CreateNode(key, value);
-            Root.Color = RbColor.Black;
-            Count = 1;
-            return;
-        }
-
-        RbNode<TKey, TValue>? parent = null;
-        RbNode<TKey, TValue>? current = Root;
-
-        while (current != null) {
-            parent = current;
-            int cmp = Comparer.Compare(key, current.Key);
-            if (cmp == 0) {
-                current.Value = value;
-                return;
-            }
-
-            current = cmp < 0 ? current.Left : current.Right;
-        }
-
-        RbNode<TKey, TValue> node = CreateNode(key, value);
-        node.Parent = parent;
-        if (Comparer.Compare(key, parent!.Key) < 0) {
-            parent.Left = node;
-        }
-        else {
-            parent.Right = node;
-        }
-
-        Count++;
-        OnNodeAdded(node);
-    }
-
-    public override bool Remove(TKey key) {
-        RbNode<TKey, TValue>? z = FindNode(key);
-        if (z == null) {
-            return false;
-        }
-
-        RbNode<TKey, TValue> y = z;
+    protected override void RemoveNode(RbNode<TKey, TValue> node) {
+        RbNode<TKey, TValue> y = node;
         RbColor yOriginalColor = y.Color;
         RbNode<TKey, TValue>? x;
         RbNode<TKey, TValue>? xParent;
 
-        if (z.Left == null) {
-            x = z.Right;
-            xParent = z.Parent;
-            Transplant(z, z.Right);
+        if (node.Left == null) {
+            x = node.Right;
+            xParent = node.Parent;
+            Transplant(node, node.Right);
         }
-        else if (z.Right == null) {
-            x = z.Left;
-            xParent = z.Parent;
-            Transplant(z, z.Left);
+        else if (node.Right == null) {
+            x = node.Left;
+            xParent = node.Parent;
+            Transplant(node, node.Left);
         }
         else {
-            y = Minimum(z.Right);
+            y = Minimum(node.Right);
             yOriginalColor = y.Color;
             x = y.Right;
 
-            if (y.Parent == z) {
+            if (y.Parent == node) {
                 xParent = y;
                 if (x != null) {
                     x.Parent = y;
@@ -74,17 +34,15 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
             else {
                 xParent = y.Parent;
                 Transplant(y, y.Right);
-                y.Right = z.Right;
+                y.Right = node.Right;
                 y.Right!.Parent = y;
             }
 
-            Transplant(z, y);
-            y.Left = z.Left;
+            Transplant(node, y);
+            y.Left = node.Left;
             y.Left!.Parent = y;
-            y.Color = z.Color;
+            y.Color = node.Color;
         }
-
-        Count--;
 
         if (yOriginalColor == RbColor.Black) {
             FixDelete(x, xParent);
@@ -93,8 +51,6 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
         if (Root != null) {
             Root.Color = RbColor.Black;
         }
-
-        return true;
     }
 
     protected override RbNode<TKey, TValue> CreateNode(TKey key, TValue value)
@@ -105,7 +61,7 @@ public class RedBlackTree<TKey, TValue> : BinarySearchTreeBase<TKey, TValue, RbN
     }
 
     protected override void OnNodeRemoved(RbNode<TKey, TValue>? parent, RbNode<TKey, TValue>? child) {
-        // Delete balancing is implemented in Remove because fix-up needs removed-node color context.
+        // Red-black deletion is handled in RemoveNode, which is called by the base Remove.
     }
 
     private static RbColor ColorOf(RbNode<TKey, TValue>? node) => node?.Color ?? RbColor.Black;
