@@ -91,7 +91,7 @@ internal class FftMultiplier : IMultiplier {
         for (int i = 0; i < digitCount; i++) {
             uint low = (uint)normalized[2 * i];
             uint high = 2 * i + 1 < chunkCount ? (uint)normalized[2 * i + 1] : 0u;
-            digits[i] = low | (high << 16);
+            digits[i] = low | (high << ChunkBits);
         }
 
         return BetterBigInteger.NormalizeDigits(digits);
